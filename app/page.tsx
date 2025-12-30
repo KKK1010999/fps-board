@@ -19,9 +19,9 @@ type Post = {
 
 // ★稼ぐためのアフィリエイト商品データ（後で自分のAmazonリンクに書き換えられます）
 const RECOMMEND_ITEMS = [
-  { id: 1, name: "Logicool G PRO X", price: "¥15,800", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/..." },
+  { id: 1, name: "Logicool G PRO X", price: "¥9,000", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/4syG3Sy" },
   { id: 2, name: "SteelSeries Arctis", price: "¥9,800", img: "🎧", desc: "コスパ最強", url: "https://amzn.to/3YhUjkA" },
-  { id: 3, name: "Razer Huntsman v3", price: "¥25,000", img: "⌨️", desc: "反応爆速キーボード", url: "https://amzn.to/..." },
+  { id: 3, name: "Razer Huntsman v3", price: "¥15,000", img: "⌨️", desc: "反応爆速キーボード", url: "https://amzn.to/3MZqQtl" },
 ];
 
 const GAME_RANKS: { [key: string]: string[] } = {
