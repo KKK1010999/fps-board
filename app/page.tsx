@@ -22,7 +22,14 @@ const RECOMMEND_ITEMS = [
   { id: 1, name: "Logicool G PRO X", price: "¥9,000", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/4syG3Sy" },
   { id: 2, name: "SteelSeries Arctis", price: "¥6,500", img: "🎧", desc: "コスパ最強", url: "https://amzn.to/3YhUjkA" },
   { id: 3, name: "Razer Huntsman v3", price: "¥15,000", img: "⌨️", desc: "反応爆速キーボード", url: "https://amzn.to/3MZqQtl" },
-];
+
+];// 稼ぐための「高単価」バナー（後でA8.netなどのリンクに書き換えます）
+const ADS_BANNER = {
+  title: "ラグに負けるな！",
+  text: "FPS最強の高速回線「NURO光」で撃ち勝て。今なら45,000円還元中！",
+  url: "https://px.a8.net/...", // ここに高単価アフィリエイトリンクを入れる
+  color: "bg-gradient-to-r from-red-600 to-orange-500" // 目立つ赤色
+};
 
 const GAME_RANKS: { [key: string]: string[] } = {
   "APEX": ["ルーキー", "ブロンズ", "シルバー", "ゴールド", "プラチナ", "ダイヤ", "マスター", "プレデター"],
@@ -81,6 +88,11 @@ export default function Home() {
         <h1 className="text-xl font-bold text-cyan-400">FPS掲示板</h1>
         <button onClick={() => supabase.auth.signOut()} className="text-xs bg-slate-700 px-3 py-1 rounded">ログアウト</button>
       </header>
+      
+      <a href={ADS_BANNER.url} target="_blank" className={`block p-4 ${ADS_BANNER.color} text-white text-center shadow-lg hover:opacity-90 transition`}>
+        <div className="text-xl font-black animate-pulse">⚠️ {ADS_BANNER.title}</div>
+        <div className="text-sm font-bold mt-1">{ADS_BANNER.text} ▶︎</div>
+      </a>
 
       {/* ★追加：稼ぐための「おすすめデバイス」広告セクション */}
       <div className="p-4 bg-slate-900">
