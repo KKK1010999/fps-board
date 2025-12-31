@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import PostItem from "@/components/PostItem";
 
+// ★修正点：user_id を復活させました（これでエラーが消えます）
 type Post = {
   id: number;
   game: string;
@@ -10,23 +11,23 @@ type Post = {
   message: string;
   tags: string[];
   created_at: string;
+  user_id: string; // 👈 ここを復活！
   contact_info: string | null;
 };
 
-// ドコモ光用のバナー設定
+// 広告データ
 const ADS_BANNER = {
-  title: "ドコモユーザーならこれ一択",
-  text: "スマホ代も安くなる！高速回線「ドコモ光」でラグとおさらば",
-  // 👇 自分のリンクに書き換えてください
-  url: "https://px.a8.net/...", 
-  color: "bg-gradient-to-r from-red-600 to-red-500 border border-white/20"
+  title: "PING値を下げろ",
+  text: "勝てない原因は回線かも？FPS専用「高速回線」をチェック",
+  url: "https://px.a8.net/svt/ejp?a8mat=45KRG0+BQPSAA+3SPO+CKJSMQ", 
+  color: "bg-gradient-to-r from-slate-800 to-slate-900 border border-cyan-500/30"
 };
 
 // おすすめデバイス
 const RECOMMEND_ITEMS = [
-  { id: 1, name: "Logicool G PRO X", price: "¥15,800", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/..." },
-  { id: 2, name: "SteelSeries Arctis", price: "¥9,800", img: "🎧", desc: "足音が超聞こえる", url: "https://amzn.to/..." },
-  { id: 3, name: "Razer Huntsman v3", price: "¥25,000", img: "⌨️", desc: "反応爆速キーボード", url: "https://amzn.to/..." },
+  { id: 1, name: "G703h LIGHTSPEED HERO", price: "¥9,000", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/4jnuadS" },
+  { id: 2, name: "Razer BlackShark V2 X", price: "¥6,000", img: "🎧", desc: "足音が超聞こえる", url: "https://amzn.to/48ZO2Af" },
+  { id: 3, name: "Logicool G PRO", price: "¥1,5000", img: "⌨️", desc: "反応爆速キーボード", url: "https://amzn.to/44SePvX" },
 ];
 
 const GAME_RANKS: { [key: string]: string[] } = {
@@ -55,19 +56,19 @@ export default function Home() {
   const handleAddPost = async () => {
     if (!inputMessage || !inputContact) return alert("メッセージと連絡先を入力してください");
     
-    // ログインID（user_id）は送らず、誰でも書き込めるようにする
+    // 匿名投稿なので user_id は入れずに送信する
     const { error } = await supabase.from('posts').insert([{
       game: inputGame, 
       rank: inputRank, 
       message: inputMessage, 
       contact_info: inputContact, 
       tags: ["募集中"], 
-      // user_id は削除（またはNULL）
+      // user_id はDB側で自動またはNULLになるので送らなくてOK
     }]);
 
     if (error) {
       console.error(error);
-      alert("投稿エラー：データベースの設定を確認してください");
+      alert("投稿エラー：しばらく経ってから試してください");
     } else { 
       await fetchPosts(); 
       setIsModalOpen(false); 
@@ -82,20 +83,20 @@ export default function Home() {
     <div className="min-h-screen bg-slate-900 text-white pb-20">
       <header className="bg-slate-800 p-4 sticky top-0 z-30 border-b border-slate-700 flex justify-between items-center shadow-lg">
         <h1 className="text-xl font-bold text-cyan-400">FPS掲示板</h1>
-        <div className="text-xs text-slate-500">匿名投稿モード</div>
+        <div className="text-xs text-slate-500 font-mono">Anonymous Mode</div>
       </header>
 
-      {/* ドコモ光バナー */}
+      {/* 広告バナー */}
       <a href={ADS_BANNER.url} target="_blank" className={`block mx-4 mt-4 p-4 rounded-xl ${ADS_BANNER.color} text-slate-200 shadow-lg group hover:border-cyan-500 transition relative overflow-hidden`}>
-        <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-white/20 to-transparent skew-x-12 transform translate-x-10 group-hover:translate-x-0 transition duration-500"></div>
+        <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-cyan-500/10 to-transparent skew-x-12 transform translate-x-10 group-hover:translate-x-0 transition duration-500"></div>
         <div className="flex items-center justify-between relative z-10">
           <div>
-            <div className="text-lg font-bold text-white flex items-center gap-2">
-              <span className="text-xl">🔥</span> {ADS_BANNER.title}
+            <div className="text-lg font-bold text-cyan-400 flex items-center gap-2">
+              <span className="text-xl">⚡️</span> {ADS_BANNER.title}
             </div>
-            <div className="text-xs text-slate-100 mt-1">{ADS_BANNER.text}</div>
+            <div className="text-xs text-slate-400 mt-1">{ADS_BANNER.text}</div>
           </div>
-          <div className="bg-white/20 text-white px-3 py-1 rounded text-xs font-bold border border-white/30">CHECK ▶︎</div>
+          <div className="bg-cyan-900/50 text-cyan-300 px-3 py-1 rounded text-xs font-bold border border-cyan-700">CHECK ▶︎</div>
         </div>
       </a>
 
@@ -106,10 +107,11 @@ export default function Home() {
           {RECOMMEND_ITEMS.map((item) => (
             <a key={item.id} href={item.url} target="_blank" className="min-w-[200px] bg-slate-800 border border-slate-700 p-3 rounded-lg hover:border-cyan-500 transition shadow-md flex items-center gap-3">
               <div className="w-12 h-12 flex-shrink-0 bg-slate-700 rounded overflow-hidden flex items-center justify-center text-2xl">
-                 {item.img}
+                 {item.img.startsWith('http') ? <img src={item.img} alt={item.name} className="w-full h-full object-contain" /> : <span className="text-2xl">{item.img}</span>}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-bold truncate text-slate-200">{item.name}</div>
+                <div className="text-[10px] text-slate-400 truncate mb-1">{item.desc}</div>
                 <div className="text-xs font-bold text-cyan-400">{item.price}</div>
               </div>
             </a>
@@ -127,15 +129,15 @@ export default function Home() {
       {/* 投稿一覧 */}
       <div className="px-4 space-y-4 mt-4">
         {filteredPosts.map((post) => (
-          // 匿名なので削除ボタンの判定（currentUserId）は無し
-          <PostItem key={post.id} post={post} currentUserId={null} onDelete={fetchPosts} />
+          // 修正点：currentUserId に undefined を渡すように変更
+          <PostItem key={post.id} post={post} currentUserId={undefined} onDelete={fetchPosts} />
         ))}
         {filteredPosts.length === 0 && (
           <div className="text-center text-slate-500 py-10">まだ投稿がありません。<br/>自由に募集しよう！</div>
         )}
       </div>
 
-      {/* 投稿ボタン（誰でも押せる） */}
+      {/* 投稿ボタン */}
       <button onClick={() => setIsModalOpen(true)} className="fixed bottom-6 right-6 bg-cyan-500 hover:bg-cyan-400 text-white w-14 h-14 rounded-full shadow-lg text-2xl font-bold flex items-center justify-center z-20 transition transform hover:rotate-90">＋</button>
 
       {/* 投稿用モーダル */}
