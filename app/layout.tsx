@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Apex、Valorant、OW2の募集掲示板です。ログイン不要、誰でも1秒で書き込める！DiscordIDの交換やランク募集に最適。完全匿名・無料です。",
   // 👇 ここにGoogleの合言葉を入れます！
   verification: {
-    google: "baRaDgm8AK-OEm5V2", 
+    google: "baRaDgm8AK-OEm5V2_LZ0RjZueSV3mfmMrr-1zSxTZk", 
   },
 };
 
