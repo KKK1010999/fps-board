@@ -27,9 +27,9 @@ const ADS_BANNER = {
 
 // おすすめデバイス（アフィリエイト用）
 const RECOMMEND_ITEMS = [
-  { id: 1, name: "Logicool G PRO X", price: "¥15,800", img: "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg", desc: "最強の定番マウス", url: "https://amzn.to/..." },
-  { id: 2, name: "SteelSeries Arctis", price: "¥9,800", img: "https://m.media-amazon.com/images/I/71Is8d7h+BL._AC_SL1500_.jpg", desc: "足音が超聞こえる", url: "https://amzn.to/..." },
-  { id: 3, name: "Razer Huntsman v3", price: "¥25,000", img: "https://m.media-amazon.com/images/I/71qG+b3l-XL._AC_SL1500_.jpg", desc: "反応爆速キーボード", url: "https://amzn.to/..." },
+  { id: 1, name: "G703h LIGHTSPEED HERO", price: "¥9,000", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/4jnuadS" },
+  { id: 2, name: "Razer BlackShark V2 X", price: "¥6,000", img: "🎧", desc: "足音が超聞こえる", url: "https://amzn.to/48ZO2Af" },
+  { id: 3, name: "Logicool G PRO", price: "¥1,5000", img: "⌨️", desc: "反応爆速キーボード", url: "https://amzn.to/44SePvX" },
 ];
 
 const GAME_RANKS: { [key: string]: string[] } = {
