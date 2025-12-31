@@ -5,6 +5,21 @@ import PostItem from "@/components/PostItem";
 
 type Post = any; 
 
+// ★ 復活！A8.netの広告バナー
+const ADS_BANNER = {
+  title: "PING値を下げろ",
+  text: "勝てない原因は回線かも？FPS専用「高速回線」をチェック",
+  url: "https://px.a8.net/svt/ejp?a8mat=45KRG0+BQPSAA+3SPO+CKJSMQ", 
+  color: "bg-gradient-to-r from-slate-800 to-slate-900 border border-cyan-500/30"
+};
+
+// ★ 復活！Amazonのおすすめデバイス
+const RECOMMEND_ITEMS = [
+  { id: 1, name: "G703h LIGHTSPEED HERO", price: "¥9,000", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/4jnuadS" },
+  { id: 2, name: "Razer BlackShark V2 X", price: "¥6,000", img: "🎧", desc: "足音が超聞こえる", url: "https://amzn.to/48ZO2Af" },
+  { id: 3, name: "Logicool G PRO", price: "¥1,5000", img: "⌨️", desc: "反応爆速キーボード", url: "https://amzn.to/44SePvX" },
+];
+
 const GAME_RANKS: { [key: string]: string[] } = {
   "APEX": ["ルーキー", "ブロンズ", "シルバー", "ゴールド", "プラチナ", "ダイヤ", "マスター", "プレデター"],
   "VALORANT": ["アイアン", "ブロンズ", "シルバー", "ゴールド", "プラチナ", "ダイヤ", "アセンダント", "イモータル", "レディアント"],
@@ -43,7 +58,6 @@ export default function Home() {
   const handleAddPost = async () => {
     if (!inputMessage || !inputContact) return alert("入力してください");
     
-    // データベースへの登録（IDタイプをメッセージの先頭に付与して保存）
     const fullContact = `[${inputIdType}] ${inputContact}`;
     
     const { error } = await supabase.from('posts').insert([{
@@ -57,14 +71,12 @@ export default function Home() {
     if (error) {
       alert("エラーが発生しました");
     } else {
-      // Xシェア用のURL作成
       const text = `${inputGame}で${inputRank}募集！\n${selectedTags.join(' ')}\n「${inputMessage}」\n#FPS募集 #掲示板\n`;
       const encodedText = encodeURIComponent(text);
       setShareUrl(`https://twitter.com/intent/tweet?text=${encodedText}&url=${encodeURIComponent(window.location.href)}`);
       
       await fetchPosts();
       setIsModalOpen(false);
-      // リセット
       setInputMessage(""); setInputContact(""); setSelectedTags([]);
     }
   };
@@ -75,7 +87,7 @@ export default function Home() {
     <div className="min-h-screen bg-slate-900 text-white pb-24">
       <header className="bg-slate-800 p-4 sticky top-0 z-30 border-b border-slate-700 flex justify-between items-center shadow-lg">
         <h1 className="text-xl font-bold text-cyan-400 font-sans tracking-tight">FPS-BOARD</h1>
-        <div className="text-[10px] text-slate-500 font-mono">2025.12.31 15:52</div>
+        <div className="text-[10px] text-slate-500 font-mono">2025.12.31</div>
       </header>
 
       {/* Xシェア誘導バナー（投稿直後のみ表示） */}
@@ -88,6 +100,39 @@ export default function Home() {
           <button onClick={() => setShareUrl("")} className="w-full mt-2 text-[10px] text-slate-500">とじる</button>
         </div>
       )}
+
+      {/* ★ 復活！広告バナー */}
+      <a href={ADS_BANNER.url} target="_blank" className={`block mx-4 mt-4 p-4 rounded-xl ${ADS_BANNER.color} text-slate-200 shadow-lg group hover:border-cyan-500 transition relative overflow-hidden`}>
+        <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-cyan-500/10 to-transparent skew-x-12 transform translate-x-10 group-hover:translate-x-0 transition duration-500"></div>
+        <div className="flex items-center justify-between relative z-10">
+          <div>
+            <div className="text-lg font-bold text-cyan-400 flex items-center gap-2">
+              <span className="text-xl">⚡️</span> {ADS_BANNER.title}
+            </div>
+            <div className="text-xs text-slate-400 mt-1">{ADS_BANNER.text}</div>
+          </div>
+          <div className="bg-cyan-900/50 text-cyan-300 px-3 py-1 rounded text-xs font-bold border border-cyan-700">CHECK ▶︎</div>
+        </div>
+      </a>
+
+      {/* ★ 復活！Amazonおすすめデバイス */}
+      <div className="p-4 bg-slate-900 mt-2">
+        <h2 className="text-xs font-bold text-slate-500 mb-2 tracking-widest uppercase">Amazon / おすすめデバイス</h2>
+        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          {RECOMMEND_ITEMS.map((item) => (
+            <a key={item.id} href={item.url} target="_blank" className="min-w-[200px] bg-slate-800 border border-slate-700 p-3 rounded-lg hover:border-cyan-500 transition shadow-md flex items-center gap-3">
+              <div className="w-12 h-12 flex-shrink-0 bg-slate-700 rounded overflow-hidden flex items-center justify-center text-2xl">
+                 {item.img.startsWith('http') ? <img src={item.img} alt={item.name} className="w-full h-full object-contain" /> : <span className="text-2xl">{item.img}</span>}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-bold truncate text-slate-200">{item.name}</div>
+                <div className="text-[10px] text-slate-400 truncate mb-1">{item.desc}</div>
+                <div className="text-xs font-bold text-cyan-400">{item.price}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
 
       {/* フィルター */}
       <div className="p-4 flex gap-2 overflow-x-auto sticky top-[61px] bg-slate-900 z-10 border-b border-slate-800/50">
@@ -117,7 +162,6 @@ export default function Home() {
               <select value={inputRank} onChange={(e) => setInputRank(e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">{GAME_RANKS[inputGame].map(r => <option key={r} value={r}>{r}</option>)}</select>
             </div>
 
-            {/* タグ選択 */}
             <div className="flex flex-wrap gap-2">
               {AVAILABLE_TAGS.map(tag => (
                 <button key={tag} onClick={() => toggleTag(tag)} className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${selectedTags.includes(tag) ? "bg-cyan-600 border-cyan-400 text-white" : "bg-slate-900 border-slate-700 text-slate-500"}`}>{tag}</button>
