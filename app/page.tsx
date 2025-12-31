@@ -25,10 +25,10 @@ const RECOMMEND_ITEMS = [
 
 ];// 稼ぐための「高単価」バナー（後でA8.netなどのリンクに書き換えます）
 const ADS_BANNER = {
-  title: "ラグに負けるな！",
-  text: "FPS最強の高速回線「NURO光」で撃ち勝て。今なら45,000円還元中！",
-  url: "https://px.a8.net/...", // ここに高単価アフィリエイトリンクを入れる
-  color: "bg-gradient-to-r from-red-600 to-orange-500" // 目立つ赤色
+ title: "PING値を下げろ",
+  text: "勝てない原因は回線かも？FPS専用「高速回線」をチェック",
+  url: "https://px.a8.net/...", // ※ここは自分のリンクのままにしておいてね！
+  color: "bg-gradient-to-r from-slate-800 to-slate-900 border border-cyan-500/30"
 };
 
 const GAME_RANKS: { [key: string]: string[] } = {
@@ -88,10 +88,23 @@ export default function Home() {
         <h1 className="text-xl font-bold text-cyan-400">FPS掲示板</h1>
         <button onClick={() => supabase.auth.signOut()} className="text-xs bg-slate-700 px-3 py-1 rounded">ログアウト</button>
       </header>
-      
-      <a href={ADS_BANNER.url} target="_blank" className={`block p-4 ${ADS_BANNER.color} text-white text-center shadow-lg hover:opacity-90 transition`}>
-        <div className="text-xl font-black animate-pulse">⚠️ {ADS_BANNER.title}</div>
-        <div className="text-sm font-bold mt-1">{ADS_BANNER.text} ▶︎</div>
+
+      {/* 修正版：スタイリッシュな広告バナー */}
+      <a href={ADS_BANNER.url} target="_blank" className={`block mx-4 mt-4 p-4 rounded-xl ${ADS_BANNER.color} text-slate-200 shadow-lg group hover:border-cyan-500 transition relative overflow-hidden`}>
+        {/* 背景のキラッとする装飾 */}
+        <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-cyan-500/10 to-transparent skew-x-12 transform translate-x-10 group-hover:translate-x-0 transition duration-500"></div>
+        
+        <div className="flex items-center justify-between relative z-10">
+          <div>
+            <div className="text-lg font-bold text-cyan-400 flex items-center gap-2">
+              <span className="text-xl">⚡️</span> {ADS_BANNER.title}
+            </div>
+            <div className="text-xs text-slate-400 mt-1">{ADS_BANNER.text}</div>
+          </div>
+          <div className="bg-cyan-900/50 text-cyan-300 px-3 py-1 rounded text-xs font-bold border border-cyan-700">
+            CHECK ▶︎
+          </div>
+        </div>
       </a>
 
       {/* ★追加：稼ぐための「おすすめデバイス」広告セクション */}
