@@ -21,7 +21,7 @@ type Post = {
 const ADS_BANNER = {
   title: "PING値を下げろ",
   text: "勝てない原因は回線かも？FPS専用「高速回線」をチェック",
-  url: "https://px.a8.net/...", // ★自分のリンクのままでOK
+  url: "https://px.a8.net/svt/ejp?a8mat=45KRG0+BQPSAA+3SPO+CKJSMQ", // ★自分のリンクのままでOK
   color: "bg-gradient-to-r from-slate-800 to-slate-900 border border-cyan-500/30"
 };
 
