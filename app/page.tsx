@@ -27,7 +27,20 @@ const GAME_RANKS: { [key: string]: string[] } = {
 };
 
 const ID_TYPES = ["Discord", "Riot ID", "PSN ID", "Steam ID", "その他"];
-const AVAILABLE_TAGS = ["初心者歓迎", "聞き専OK", "社会人限定", "ガチ勢", "まったり"];
+// 👇 これをコピペして書き換えるだけ！
+const AVAILABLE_TAGS = [
+  // ▼ メンタル・雰囲気（一番重要）
+  "初心者歓迎", "雰囲気重視", "怒らない人", "エンジョイ", "ガチ勢",
+  
+  // ▼ 環境・スタイル
+  "聞き専OK", "VC必須", "PC", "CS(PS5/Switch)", "クロスプレイ",
+  
+  // ▼ 年齢・属性（トラブル回避）
+  "社会人限定", "学生OK", "20歳以上", "女子歓迎", "主婦/主夫",
+  
+  // ▼ 目的・本音
+  "ランクマ", "カジュアル/アンレ", "固定メンバー募集", "サブ垢", "キャリーして"
+];
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
