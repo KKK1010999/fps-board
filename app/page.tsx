@@ -5,7 +5,7 @@ import PostItem from "@/components/PostItem";
 
 type Post = any; 
 
-// ★ 復活！A8.netの広告バナー
+// A8.net 広告バナー
 const ADS_BANNER = {
   title: "PING値を下げろ",
   text: "勝てない原因は回線かも？FPS専用「高速回線」をチェック",
@@ -13,7 +13,7 @@ const ADS_BANNER = {
   color: "bg-gradient-to-r from-slate-800 to-slate-900 border border-cyan-500/30"
 };
 
-// ★ 復活！Amazonのおすすめデバイス
+// Amazon おすすめデバイス
 const RECOMMEND_ITEMS = [
   { id: 1, name: "G703h LIGHTSPEED HERO", price: "¥9,000", img: "🖱️", desc: "最強の定番マウス", url: "https://amzn.to/4jnuadS" },
   { id: 2, name: "Razer BlackShark V2 X", price: "¥6,000", img: "🎧", desc: "足音が超聞こえる", url: "https://amzn.to/48ZO2Af" },
@@ -27,18 +27,13 @@ const GAME_RANKS: { [key: string]: string[] } = {
 };
 
 const ID_TYPES = ["Discord", "Riot ID", "PSN ID", "Steam ID", "その他"];
-// 👇 これをコピペして書き換えるだけ！
+
+// ★修正：人数タグを追加して、先頭に持ってきました（選びやすいように）
 const AVAILABLE_TAGS = [
-  // ▼ メンタル・雰囲気（一番重要）
+  "@1", "@2", "@3", 
   "初心者歓迎", "雰囲気重視", "怒らない人", "エンジョイ", "ガチ勢",
-  
-  // ▼ 環境・スタイル
   "聞き専OK", "VC必須", "PC", "CS(PS5/Switch)", "クロスプレイ",
-  
-  // ▼ 年齢・属性（トラブル回避）
   "社会人限定", "学生OK", "20歳以上", "女子歓迎", "主婦/主夫",
-  
-  // ▼ 目的・本音
   "ランクマ", "カジュアル/アンレ", "固定メンバー募集", "サブ垢", "キャリーして"
 ];
 
@@ -57,11 +52,16 @@ export default function Home() {
   
   const [activeFilter, setActiveFilter] = useState("すべて");
 
-  useEffect(() => { fetchPosts(); }, []);
+  // オートリロード（10秒ごと）
+  useEffect(() => {
+    fetchPosts(); 
+    const timer = setInterval(() => { fetchPosts(); }, 10000); 
+    return () => clearInterval(timer); 
+  }, []);
 
   const fetchPosts = async () => {
     const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false });
-    if (!error) setPosts(data || []);
+    if (!error && data) setPosts(data);
   };
 
   const toggleTag = (tag: string) => {
@@ -84,7 +84,11 @@ export default function Home() {
     if (error) {
       alert("エラーが発生しました");
     } else {
-      const text = `${inputGame}で${inputRank}募集！\n${selectedTags.join(' ')}\n「${inputMessage}」\n#FPS募集 #掲示板\n`;
+      // Xシェア用文章生成
+      const tagText = selectedTags.map(t => `#${t.replace('@', '')}`).join(' '); // @はハッシュタグに使えない場合があるのでケアしてもいいが、Xは#@1もいける場合がある。念のためそのままで。
+      const xTagText = selectedTags.map(t => t.startsWith('@') ? t : `#${t}`).join(' '); // @1はハッシュタグにせずそのまま表示したほうが文化に合う
+      
+      const text = `【${inputGame}】${inputRank}募集\n${xTagText}\n\n「${inputMessage}」\n\n#FPS募集 #掲示板\n`;
       const encodedText = encodeURIComponent(text);
       setShareUrl(`https://twitter.com/intent/tweet?text=${encodedText}&url=${encodeURIComponent(window.location.href)}`);
       
@@ -100,20 +104,23 @@ export default function Home() {
     <div className="min-h-screen bg-slate-900 text-white pb-24">
       <header className="bg-slate-800 p-4 sticky top-0 z-30 border-b border-slate-700 flex justify-between items-center shadow-lg">
         <h1 className="text-xl font-bold text-cyan-400 font-sans tracking-tight">FPS-BOARD</h1>
-        <div className="text-[10px] text-slate-500 font-mono">2025.12.31</div>
+        <div className="flex items-center gap-2">
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          </span>
+          <div className="text-[10px] text-slate-500 font-mono">LIVE CONNECT</div>
+        </div>
       </header>
 
-     {/* 修正版：Xシェア誘導バナー（画面中央に固定表示） */}
+      {/* Xシェア ポップアップ */}
       {shareUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-slate-900 border border-cyan-500 p-6 rounded-2xl shadow-2xl w-full max-w-sm relative transform transition-all scale-100">
-            {/* 閉じるボタン */}
             <button 
               onClick={() => setShareUrl("")} 
               className="absolute top-2 right-3 text-slate-500 hover:text-white text-xl"
-            >
-              ×
-            </button>
+            >×</button>
             
             <div className="text-center">
               <div className="text-4xl mb-2">📢</div>
@@ -124,16 +131,13 @@ export default function Home() {
                 href={shareUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                onClick={() => setShareUrl("")} // 押したら閉じる
+                onClick={() => setShareUrl("")} 
                 className="block w-full py-3 bg-[#1DA1F2] hover:bg-[#1a91da] text-white rounded-xl font-bold text-sm shadow-lg transition-transform active:scale-95"
               >
                 𝕏 で募集を拡散する
               </a>
               
-              <button 
-                onClick={() => setShareUrl("")} 
-                className="mt-3 text-xs text-slate-500 hover:text-slate-300 underline"
-              >
+              <button onClick={() => setShareUrl("")} className="mt-3 text-xs text-slate-500 hover:text-slate-300 underline">
                 掲示板のみ（Xには投稿しない）
               </button>
             </div>
@@ -141,7 +145,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* ★ 復活！広告バナー */}
+      {/* 広告バナー */}
       <a href={ADS_BANNER.url} target="_blank" className={`block mx-4 mt-4 p-4 rounded-xl ${ADS_BANNER.color} text-slate-200 shadow-lg group hover:border-cyan-500 transition relative overflow-hidden`}>
         <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-cyan-500/10 to-transparent skew-x-12 transform translate-x-10 group-hover:translate-x-0 transition duration-500"></div>
         <div className="flex items-center justify-between relative z-10">
@@ -155,7 +159,7 @@ export default function Home() {
         </div>
       </a>
 
-      {/* ★ 復活！Amazonおすすめデバイス */}
+      {/* Amazonおすすめデバイス */}
       <div className="p-4 bg-slate-900 mt-2">
         <h2 className="text-xs font-bold text-slate-500 mb-2 tracking-widest uppercase">Amazon / おすすめデバイス</h2>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
@@ -202,7 +206,8 @@ export default function Home() {
               <select value={inputRank} onChange={(e) => setInputRank(e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">{GAME_RANKS[inputGame].map(r => <option key={r} value={r}>{r}</option>)}</select>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            {/* タグ選択 */}
+            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
               {AVAILABLE_TAGS.map(tag => (
                 <button key={tag} onClick={() => toggleTag(tag)} className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${selectedTags.includes(tag) ? "bg-cyan-600 border-cyan-400 text-white" : "bg-slate-900 border-slate-700 text-slate-500"}`}>{tag}</button>
               ))}
