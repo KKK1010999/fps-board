@@ -90,14 +90,41 @@ export default function Home() {
         <div className="text-[10px] text-slate-500 font-mono">2025.12.31</div>
       </header>
 
-      {/* Xシェア誘導バナー（投稿直後のみ表示） */}
+     {/* 修正版：Xシェア誘導バナー（画面中央に固定表示） */}
       {shareUrl && (
-        <div className="m-4 p-4 bg-cyan-900/30 border border-cyan-500 rounded-xl animate-bounce">
-          <div className="text-sm font-bold text-cyan-400 mb-2">🎉 募集を投稿しました！</div>
-          <a href={shareUrl} target="_blank" className="block w-full py-2 bg-black text-white text-center rounded-lg font-bold text-sm">
-            𝕏 (Twitter) でさらに拡散する
-          </a>
-          <button onClick={() => setShareUrl("")} className="w-full mt-2 text-[10px] text-slate-500">とじる</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-cyan-500 p-6 rounded-2xl shadow-2xl w-full max-w-sm relative transform transition-all scale-100">
+            {/* 閉じるボタン */}
+            <button 
+              onClick={() => setShareUrl("")} 
+              className="absolute top-2 right-3 text-slate-500 hover:text-white text-xl"
+            >
+              ×
+            </button>
+            
+            <div className="text-center">
+              <div className="text-4xl mb-2">📢</div>
+              <h3 className="text-lg font-bold text-white mb-1">投稿完了！</h3>
+              <p className="text-xs text-slate-400 mb-4">X (Twitter) にも投稿して<br/>集まりやすくしますか？</p>
+              
+              <a 
+                href={shareUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={() => setShareUrl("")} // 押したら閉じる
+                className="block w-full py-3 bg-[#1DA1F2] hover:bg-[#1a91da] text-white rounded-xl font-bold text-sm shadow-lg transition-transform active:scale-95"
+              >
+                𝕏 で募集を拡散する
+              </a>
+              
+              <button 
+                onClick={() => setShareUrl("")} 
+                className="mt-3 text-xs text-slate-500 hover:text-slate-300 underline"
+              >
+                掲示板のみ（Xには投稿しない）
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
