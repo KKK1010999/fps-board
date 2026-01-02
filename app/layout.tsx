@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FPS募集掲示板 | 完全匿名・登録不要で即募集！",
-  description: "Apex、Valorant、OW2の募集掲示板です。ログイン不要、誰でも1秒で書き込める！DiscordIDの交換やランク募集に最適。完全匿名・無料です。",
-  // 👇 ここにGoogleの合言葉を入れます！
-  verification: {
-    google: "baRaDgm8AK-OEm5V2_LZ0RjZueSV3mfmMrr-1zSxTZk", 
-  },
+  title: "FPS募集掲示板 | ランク・条件で即マッチング",
+  description: "APEX、VALORANT、OW2の募集掲示板。社会人限定、聞き専OKなど細かい条件で検索可能。",
 };
 
 export default function RootLayout({
@@ -20,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
