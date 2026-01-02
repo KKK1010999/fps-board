@@ -27,10 +27,7 @@ const GAME_RANKS: { [key: string]: string[] } = {
 };
 
 const ID_TYPES = ["Discord", "Riot ID", "PSN ID", "Steam ID", "その他"];
-
-// ★修正：人数タグを追加して、先頭に持ってきました（選びやすいように）
 const AVAILABLE_TAGS = [
-  "@1", "@2", "@3", 
   "初心者歓迎", "雰囲気重視", "怒らない人", "エンジョイ", "ガチ勢",
   "聞き専OK", "VC必須", "PC", "CS(PS5/Switch)", "クロスプレイ",
   "社会人限定", "学生OK", "20歳以上", "女子歓迎", "主婦/主夫",
@@ -52,16 +49,11 @@ export default function Home() {
   
   const [activeFilter, setActiveFilter] = useState("すべて");
 
-  // オートリロード（10秒ごと）
-  useEffect(() => {
-    fetchPosts(); 
-    const timer = setInterval(() => { fetchPosts(); }, 10000); 
-    return () => clearInterval(timer); 
-  }, []);
+  useEffect(() => { fetchPosts(); }, []);
 
   const fetchPosts = async () => {
     const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false });
-    if (!error && data) setPosts(data);
+    if (!error) setPosts(data || []);
   };
 
   const toggleTag = (tag: string) => {
@@ -84,11 +76,11 @@ export default function Home() {
     if (error) {
       alert("エラーが発生しました");
     } else {
-      // Xシェア用文章生成
-      const tagText = selectedTags.map(t => `#${t.replace('@', '')}`).join(' '); // @はハッシュタグに使えない場合があるのでケアしてもいいが、Xは#@1もいける場合がある。念のためそのままで。
-      const xTagText = selectedTags.map(t => t.startsWith('@') ? t : `#${t}`).join(' '); // @1はハッシュタグにせずそのまま表示したほうが文化に合う
-      
-      const text = `【${inputGame}】${inputRank}募集\n${xTagText}\n\n「${inputMessage}」\n\n#FPS募集 #掲示板\n`;
+      // ★修正：ゲーム名に応じたタグ(#APEX募集など)を自動追加
+      const tagText = selectedTags.map(t => `#${t}`).join(' '); 
+      const gameTag = `#${inputGame}募集`; // 例: #APEX募集
+
+      const text = `【${inputGame}】${inputRank}募集\n${tagText}\n\n「${inputMessage}」\n\n${gameTag} #FPS募集 #掲示板\n`;
       const encodedText = encodeURIComponent(text);
       setShareUrl(`https://twitter.com/intent/tweet?text=${encodedText}&url=${encodeURIComponent(window.location.href)}`);
       
@@ -104,13 +96,7 @@ export default function Home() {
     <div className="min-h-screen bg-slate-900 text-white pb-24">
       <header className="bg-slate-800 p-4 sticky top-0 z-30 border-b border-slate-700 flex justify-between items-center shadow-lg">
         <h1 className="text-xl font-bold text-cyan-400 font-sans tracking-tight">FPS-BOARD</h1>
-        <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-          </span>
-          <div className="text-[10px] text-slate-500 font-mono">LIVE CONNECT</div>
-        </div>
+        <div className="text-[10px] text-slate-500 font-mono">2026.01.02</div>
       </header>
 
       {/* Xシェア ポップアップ */}
@@ -206,8 +192,7 @@ export default function Home() {
               <select value={inputRank} onChange={(e) => setInputRank(e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">{GAME_RANKS[inputGame].map(r => <option key={r} value={r}>{r}</option>)}</select>
             </div>
 
-            {/* タグ選択 */}
-            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+            <div className="flex flex-wrap gap-2">
               {AVAILABLE_TAGS.map(tag => (
                 <button key={tag} onClick={() => toggleTag(tag)} className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${selectedTags.includes(tag) ? "bg-cyan-600 border-cyan-400 text-white" : "bg-slate-900 border-slate-700 text-slate-500"}`}>{tag}</button>
               ))}
